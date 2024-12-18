@@ -1,5 +1,9 @@
 package FileCompression;
 
+
+//This class is used to keep the characters inside the text input file
+//It implements the concept of tree so we can do Heap operations in order to create the Huffman Tree
+
 public class ByteNode implements Comparable<ByteNode>{
     Byte data;
     int frequency;
@@ -11,12 +15,9 @@ public class ByteNode implements Comparable<ByteNode>{
         this.data=data;
         this.frequency=weight;
     }
-    public int compareTo(ByteNode o)
+    public int compareTo(ByteNode other)
     {
-        /*int frequencyCompare = Integer.compare(this.frequency,o.frequency);
-        if(frequencyCompare != 0)
-            return frequencyCompare;
-        return 0;*/
-        return this.frequency - o.frequency;
+        //Comparing the frequency of this ByteNode with the input ByteNode
+        return this.frequency - other.frequency;
     }
 }
