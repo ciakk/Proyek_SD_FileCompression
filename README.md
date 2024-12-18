@@ -28,6 +28,7 @@ Yang mengerjakan : 1 orang(Sherleen)
 - Decompress the HuffmanBytes to the original form ( decomp method and convertByteInBit method)
 Yang mengerjakan : 2 orang(Jason & Joshua)
 
+# Class Diagram
 
 
 ![FileCompression_CD (1)](https://github.com/user-attachments/assets/b22dec96-6f26-4746-b10d-a195997e7a07)
