@@ -1,7 +1,7 @@
 # Proyek_SD_FileCompression
 Proyek SD:
 Theme : File Compression
-Data Structure used : Heap Tree
+Data Structure used : Heap Tree dan HashMap
 Objective : Reduce the size of a file for a faster data transmission and saving storage. And for certain context,it can also be used for encryption.
 
 Basic Concept : ASCII Characters from 1-127 are represented in 8 bits/1 byte. The assigned values for each bits in the byte,needs chart/encoder/mapping to be converted as character,otherwise it just stays as an 8 bit integer. In this assignment,we are gonna shorten the size of bits from each characters,based on the frequency of each characters.
