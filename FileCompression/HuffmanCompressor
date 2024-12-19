@@ -1,0 +1,117 @@
+
+// cia's
+import java.io.*;
+import java.nio.file.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+
+public class HuffmanCompressor {
+
+    // Node class for Huffman Tree
+    static class Node implements Comparable<Node> {
+        byte data;
+        int frequency;
+        Node left, right;
+
+        Node(byte data, int frequency) {
+            this.data = data;
+            this.frequency = frequency;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return this.frequency - o.frequency;
+        }
+    }
+
+    // Generate frequency map from the input bytes
+    public static Map<Byte, Integer> getFrequencyMap(byte[] bytes) {
+        Map<Byte, Integer> frequencyMap = new HashMap<>();
+        for (byte b : bytes) {
+            frequencyMap.put(b, frequencyMap.getOrDefault(b, 0) + 1);
+        }
+        return frequencyMap;
+    }
+
+    // Build Huffman Tree
+    public static Node buildHuffmanTree(Map<Byte, Integer> frequencyMap) {
+        PriorityQueue<Node> queue = new PriorityQueue<>();
+        for (Map.Entry<Byte, Integer> entry : frequencyMap.entrySet()) {
+            queue.add(new Node(entry.getKey(), entry.getValue()));
+        }
+
+        while (queue.size() > 1) {
+            Node left = queue.poll();
+            Node right = queue.poll();
+            Node parent = new Node((byte) 0, left.frequency + right.frequency);
+            parent.left = left;
+            parent.right = right;
+            queue.add(parent);
+        }
+        return queue.poll();
+    }
+
+    // Generate Huffman Code Map
+    public static void generateHuffmanCode(Node node, String code, Map<Byte, String> huffmanCodeMap) {
+        if (node == null) return;
+
+        if (node.left == null && node.right == null) {
+            huffmanCodeMap.put(node.data, code);
+        }
+
+        generateHuffmanCode(node.left, code + "0", huffmanCodeMap);
+        generateHuffmanCode(node.right, code + "1", huffmanCodeMap);
+    }
+
+    // Compress input bytes using Huffman codes
+    public static byte[] compressBytes(byte[] originalBytes, Map<Byte, String> huffmanCodeMap) {
+        StringBuilder encodedData = new StringBuilder();
+        for (byte b : originalBytes) {
+            encodedData.append(huffmanCodeMap.get(b));
+        }
+
+        return convertToByteArray(encodedData.toString());
+    }
+
+    // Convert encoded binary string to byte array
+    private static byte[] convertToByteArray(String encoded) {
+        int byteLength = (encoded.length() + 7) / 8;
+        byte[] compressedBytes = new byte[byteLength];
+        int index = 0;
+
+        for (int i = 0; i < encoded.length(); i += 8) {
+            String byteString = encoded.substring(i, Math.min(i + 8, encoded.length()));
+            compressedBytes[index++] = (byte) Integer.parseInt(byteString, 2);
+        }
+        return compressedBytes;
+    }
+
+    public static void main(String[] args) {
+        try {
+            // Read the original bytes from a file
+            byte[] originalBytes = Files.readAllBytes(Paths.get("inputfile"));
+
+            // Generate frequency map
+            Map<Byte, Integer> frequencyMap = getFrequencyMap(originalBytes);
+
+            // Build Huffman Tree
+            Node root = buildHuffmanTree(frequencyMap);
+
+            // Generate Huffman codes
+            Map<Byte, String> huffmanCodeMap = new HashMap<>();
+            generateHuffmanCode(root, "", huffmanCodeMap);
+
+            // Compress the original bytes
+            byte[] compressedBytes = compressBytes(originalBytes, huffmanCodeMap);
+
+            // Save compressed bytes to output file
+            Files.write(Paths.get("compressed_output"), compressedBytes);
+
+            System.out.println("Compression completed. Output saved to 'compressed_output'.");
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
